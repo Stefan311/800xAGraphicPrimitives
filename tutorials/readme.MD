@@ -32,3 +32,4 @@ See [Deployment](deploying.MD)
 
 ## How to...
 ... [Write PG2 / 800xA variables](howto_writevar.MD)
+... [create enumeration properties](howto_enum.MD)

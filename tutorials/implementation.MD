@@ -8,8 +8,13 @@ This is the complete command:
 - Add the signature key to your project.
     - go to the project properties... signing
     - check "Sign the assembly", browse for the PG2Key.snk, check "Delay Sign only" too.
-- Add a reference to the **GraphicsKernel.dll** and **AfwExpressionHandling.dll**, you can usually find this files in **c:\Program Files (x86)\ABB Industrial IT\Operate IT\Process Portal A\bin\**.
+- Add a reference to the **GraphicsKernel.dll** and **AfwExpressionHandling.dll**, you can usually find this files in 
+**c:\Program Files (x86)\ABB Industrial IT\Operate IT\Process Portal A\bin\** 800xA 5.1
+or
+**c:\Program Files (x86)\ABB 800xA\Base\bin\** 800xA 6.x
+
 - Implement the Class
+
 ```C#
 using AfwDynamicGraphics;
 using AfwDynamicGraphics.Media;
@@ -19,17 +24,19 @@ using System.Windows;
 using System.Windows.Media;
 ```
 At first some required imports
+
 ```C#
 namespace ElementTutorial
 {
     [PrimitiveItemAttribute("{F2280FE4-4DFF-4c77-92E9-2AB593C4ED07}", "ABB:FirstElement", "FirstElement", "Tutorial Elements", "My first graphic primitive")]
 ```
 This defines where you can find your Graphic Primitive in Graphic Builder
-1. Is a random GUID. You should generate a new one.
+1. Is a random GUID. **You should generate a new one**
 2. Is the internal name.
 3. Is the visible name
 4. Is the category name
 5. Is the description
+
 you can also add an icon resource name as parameter, but I have not get this working until now.
 
 ```C#
@@ -38,6 +45,7 @@ you can also add an icon resource name as parameter, but I have not get this wor
 Our example primary inherits from **FrameItem**. This is the Template for visible rectangular items.
 You can also use a different one, just take a look into the GraphicsKernel.dll interface.
 The example also implements the **ITimerUpdateable** interface for the animation effect.
+
 ```C#
     {
         // additional properties
@@ -50,9 +58,10 @@ The example also implements the **ITimerUpdateable** interface for the animation
 This is the definition of PG2 properties, additional to the inherited FrameItem ones.
 1. Is the name of the property
 2. Is the datatype of the property. You can take a look into the AfwExpressionHandling.dll interface for valid types.
-3. Is the index number of this property. FrameItem contains 16 properties, so the first additional is 17. Take care of this index numbers!
+3. Is the index number of this property. FrameItem contains 16 properties, so the first additional is 17. You can use every free number, but you have to handle every given number in the **TransferValue** section.
 4. Is the description
 5. Is the property category
+
 ```C#
         // all properties copyed together
         private static readonly PropertyDesc[] allprops = new PropertyDesc[MyfirstElement.myprops.Length + FrameItem.FiGetNumberOfProps(true, true, true, true, false)];
@@ -79,6 +88,7 @@ This is the definition of PG2 properties, additional to the inherited FrameItem 
         }
 ```        
 This static constructor just copyes the inherited and the additional property definition together
+
 ```C#
         // another one constructor
         public MyfirstElement()
@@ -87,6 +97,7 @@ This static constructor just copyes the inherited and the additional property de
         }
 ```
 This constructor is required for satisfying the FrameItem templating
+
 ```C#
         // constructor for runtime instance
         public MyfirstElement(MyfirstElement other, GraphicItemVisual otherVisual)
@@ -99,6 +110,7 @@ This constructor is required for satisfying the FrameItem templating
         }
 ```
 This constructor clones an other item instance. This is the most used one. Take care of copying all required variables!
+
 ```C#
         // returns a new instance
         public override GraphicItem GetRunTimeInstance(IElementView elementView, GraphicItemVisual visual)
@@ -107,6 +119,7 @@ This constructor clones an other item instance. This is the most used one. Take 
         }
 ```
 This is the interface function used for cloning
+
 ```C#
         protected override Size GetDefaultSize()
         {
@@ -114,6 +127,7 @@ This is the interface function used for cloning
         }
 ```
 This function defines the default size
+
 ```C#
         protected override PropertyDesc[] GetPropertyDescriptions()
         {
@@ -121,6 +135,7 @@ This function defines the default size
         }
 ```
 This function returns the property definitions we copied together in the static constructor
+
 ```C#
         // called if property is changed
         protected override void TransferValue(IDataAccess accessor, int accessIndex, int propertyIndex, bool writeOperation)
@@ -140,6 +155,7 @@ This function returns the property definitions we copied together in the static 
         }
 ```
 This one is called if a property is changed dynamically, or a property is accessed by Graphics Builder. Constant properties are set by the cloning constructor.
+
 ```C#
         protected override void InitVisual(IElementView elementView, ulong noValueEffects)
         {
@@ -150,6 +166,7 @@ This one is called if a property is changed dynamically, or a property is access
         }
 ```
 This is called for graphic initialisation
+
 ```C#
         protected override void UpdateVisual(IElementView elementView, ulong updateReason, ulong noValueEffects)
         {
@@ -157,6 +174,7 @@ This is called for graphic initialisation
         }
 ```
 This is called if the control needs redraw
+
 ```C#
         public void OnTimerUpdate(IElementView elementView)
         {
@@ -175,6 +193,7 @@ This is called if the control needs redraw
         }
 ```
 This is the implementation of ITimerUpdateable. It is called about 60 times per second. Doing a full redraw such often results in high CPU load, so this is not a good example.
+
 ```C#
         private void DrawItem()
         {
